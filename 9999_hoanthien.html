@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kiểm tra số & con giáp</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; max-width: 600px; margin: auto; }
+    textarea { width: 100%; height: 80px; font-size: 16px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    button { margin-top: 10px; padding: 10px 20px; font-size: 16px; background: #3f51b5; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    .result { margin-top: 20px; }
+    .xiao, .num { padding: 4px 8px; margin: 3px; display: inline-block; border-radius: 12px; font-weight: bold; }
+    .dung { background: #c8e6c9; color: #256029; }
+    .sai  { background: #ffcccc; color: #b71c1c; }
+  </style>
+</head>
+<body>
+  <h2>Nhập số và con giáp (ví dụ: 01, 03, 牛, 兔, 猴)</h2>
+  <textarea id="input" placeholder="Nhập tại đây..."></textarea>
+  <button onclick="kiemTra()">Kiểm tra</button>
+  <div class="result" id="output"></div>
+
+  <script>
+    function kiemTra() {
+      const raw = document.getElementById("input").value.trim();
+      const output = document.getElementById("output");
+      output.innerHTML = "";
+
+      const xiaoList = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+      const hopLeXiao = new Set(xiaoList);
+
+      const numbers = raw.match(/\d{2}/g) || [];
+      const spansNum = numbers.map(n => {
+        const num = parseInt(n, 10);
+        if (num < 1 || num > 49) {
+          return `<span class="num sai">${n}</span>`;
+        } else {
+          return `<span class="num dung">${n}</span>`;
+        }
+      });
+
+      const spansXiao = [];
+      const nhapXiao = raw.match(/[\u4e00-\u9fff]/g) || [];
+
+      const errors = [];
+
+      for (const x of nhapXiao) {
+        if (!hopLeXiao.has(x)) {
+          errors.push(`Ký tự <b>${x}</b> không phải là con giáp hợp lệ.`);
+          spansXiao.push(`<span class="xiao sai">${x}</span>`);
+        } else {
+          spansXiao.push(`<span class="xiao dung">${x}</span>`);
+        }
+      }
+
+      output.innerHTML = `
+        <div><strong>Số:</strong> ${spansNum.join(" ")}</div>
+        <div style="margin-top:10px"><strong>Con giáp:</strong> ${spansXiao.join(" ")}</div>
+        ${errors.length ? `<div style="margin-top:10px;color:#b71c1c"><strong>Lỗi:</strong><br>${errors.join("<br>")}</div>` : ''}
+      `;
+    }
+  </script>
+</body>
+</html>
